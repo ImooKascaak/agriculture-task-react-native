@@ -13,14 +13,9 @@ export default function App() {
 
   function getHistogramTitle(histogramType) {
     const buttons = ["Total", "Acre", "Olive oil (tn)", "Olive oil (kg)"];
-    let histogramTitle = "Histogram of ";
-    switch (histogramType) {
-      default:
-        histogramTitle += buttons[histogramType];
-    }
-    histogramTitle += " values";
-    return histogramTitle;
+    return `Histogram of ${buttons[histogramType]} values`;
   }
+
   return (
     // <SafeAreaView style={styles.container}>
     <ScrollView
