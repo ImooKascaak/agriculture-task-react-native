@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { View } from "react-native";
-import { BarChart, Grid } from "react-native-svg-charts";
-import { Text } from "react-native-svg";
+import { Dimensions, StyleSheet, View } from "react-native";
+import { BarChart } from "react-native-chart-kit";
 
-import datax from "../mock/co2_data.json";
+import data_mock from "../mock/co2_data.json";
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 export default class Histogram extends Component {
   constructor(props) {
@@ -11,13 +13,12 @@ export default class Histogram extends Component {
   }
 
   /**
-   * Generate data to correct format
+   * Generate data to correct format based on chosen type of histogram
    * @param {any} data input data
+   * @param {histogramType} histogramType chosen type of histogram
    */
   createData(data, histogramType) {
     let createdData;
-    // console.log(histogramType);
-    // data.map((row, index) => (row["id"] = index));
     switch (histogramType) {
       case 0:
         createdData = data.map((row) => parseFloat(row.total));
@@ -31,56 +32,62 @@ export default class Histogram extends Component {
       case 3:
         createdData = data.map((row) => parseFloat(row.olive_oil_kg));
         break;
-
       default:
         createdData = data.map((row) => parseFloat(row.total));
     }
-    // console.log(data);
     return createdData;
   }
 
   render() {
-    // const data = [10, 5, 25, 15, 20];
     const histogramType = this.props.type;
-    const data = this.createData(Object.values(datax), histogramType);
-
-    const CUT_OFF = 20;
-    const Labels = ({ x, y, bandwidth, data }) =>
-      data.map((value, index) => (
-        <Text
-          key={index}
-          x={x(index) + bandwidth / 2}
-          y={value < CUT_OFF ? y(value) - 10 : y(value) + 15}
-          fontSize={14}
-          fill={value >= CUT_OFF ? "white" : "black"}
-          alignmentBaseline={"middle"}
-          textAnchor={"middle"}
-        >
-          {value}
-        </Text>
-      ));
+    const data = {
+      labels: this.createData(Object.values(data_mock), histogramType),
+      datasets: [
+        {
+          data: this.createData(Object.values(data_mock), histogramType),
+        },
+      ],
+    };
+    const chartConfig = {
+      backgroundGradientFrom: "#037d50",
+      backgroundGradientFromOpacity: 0,
+      backgroundGradientTo: "#037d50",
+      backgroundGradientToOpacity: 0,
+      color: (opacity = 1) => `rgba(3, 125, 80, ${opacity})`,
+      labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+      fillShadowGradient: "#037d50",
+      fillShadowGradientOpacity: 0.8,
+      barPercentage: 0.7,
+      style: {
+        fontSize: 20,
+      },
+    };
 
     return (
-      <View
-        style={{
-          flexDirection: "row",
-          height: 450,
-          paddingVertical: 15,
-          marginTop: 20,
-        }}
-      >
+      <View style={styles.container}>
         <BarChart
-          style={{ flex: 1 }}
           data={data}
-          svg={{ fill: "rgba(3, 125, 80, 0.9)" }}
-          contentInset={{ top: 10, bottom: 10 }}
-          spacing={0.2}
-          gridMin={0}
-        >
-          <Grid direction={Grid.Direction.HORIZONTAL} />
-          {/* <Labels /> */}
-        </BarChart>
+          width={screenWidth}
+          height={screenHeight * 0.6}
+          chartConfig={chartConfig}
+          verticalLabelRotation={90}
+          fromZero={true}
+          style={styles.barChartStyle}
+        />
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    paddingVertical: 15,
+    marginTop: 20,
+  },
+  barChartStyle: {
+    borderRadius: 16,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+});

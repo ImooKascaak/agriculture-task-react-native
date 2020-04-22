@@ -1,9 +1,12 @@
 import React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text } from "react-native";
 
 import HeaderComponent from "./components/HeaderComponent";
 import Histogram from "./components/Histogram";
 import HistogramType from "./components/HistogramType";
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 export default function App() {
   const [histogramType, setHistogramType] = React.useState(0);
@@ -17,12 +20,10 @@ export default function App() {
   }
 
   return (
-    // <SafeAreaView style={styles.container}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.containerContent}
     >
-      {/* <View style={styles.container}> */}
       <HeaderComponent></HeaderComponent>
       <HistogramType
         value={histogramType}
@@ -32,7 +33,7 @@ export default function App() {
       <Text style={styles.histogramTitle}>
         {getHistogramTitle(histogramType)}
       </Text>
-      {/* </View> */}
+      <Text>{/* {screenWidth} x {screenHeight} */}</Text>
     </ScrollView>
   );
 }
@@ -46,7 +47,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   scrollView: {
-    // backgroundColor: "pink",
     marginHorizontal: 20,
   },
   histogramTitle: {
